@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apply | The Silent Court</title>
-    <link rel="stylesheet" href="style.css?v=1.7">
+    <link rel="stylesheet" href="style.css?v=1.8">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -43,8 +43,7 @@
     <script>
         const form = document.getElementById('applyForm');
         const btn = document.getElementById('submitBtn');
-
-        const ROLE_ID = "1454918958607106098";
+        const ROLE_ID = "1328405072047345758"; 
 
         const toBase64 = file => new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -61,14 +60,7 @@
             const webhookURL = "https://small-violet-2077.niklashelmis10.workers.dev/";
             const username = document.getElementById('username').value;
             
-            let screenshotData = "";
-            const file = document.getElementById('screenshot').files[0];
-            if (file) {
-                screenshotData = await toBase64(file);
-            }
-
             const payload = {
-                // Das 'content' sorgt für den Ping außerhalb des Embeds
                 content: `⚖️ **New Application from ${username}** | <@&${ROLE_ID}>`,
                 embeds: [{
                     title: "⚖️ New Guild Member Application",
@@ -81,28 +73,33 @@
                         { name: "Hosts Raids?", value: document.getElementById('raids').value },
                         { name: "Daily Quests Contribution", value: document.getElementById('quests').value }
                     ],
-                    image: {
-                        url: "attachment://screenshot.png"
-                    },
                     footer: { text: "The Silent Court Recruitment" },
                     timestamp: new Date()
                 }]
             };
             
-            fetch(webhookURL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            }).then(() => {
-                alert('Success! Your application has been sent to The Silent Court.');
-                form.reset();
+            try {
+                const response = await fetch(webhookURL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    alert('Success! Your application has been sent to The Silent Court.');
+                    form.reset();
+                } else {
+                    const errorMsg = await response.text();
+                    alert('Error: ' + errorMsg);
+                }
+            } catch (err) {
+                alert('Connection error. Please check your Worker status.');
+                console.error(err);
+            } finally {
                 btn.innerText = "Submit Application";
                 btn.disabled = false;
-            }).catch(err => {
-                alert('Error sending application.');
-                btn.innerText = "Submit Application";
-                btn.disabled = false;
-            });
+            }
         });
     </script>
 </body>
