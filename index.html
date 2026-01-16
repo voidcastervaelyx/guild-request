@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apply | The Silent Court</title>
-    <link rel="stylesheet" href="style.css?v=1.8">
+    <link rel="stylesheet" href="style.css?v=1.9">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -23,8 +23,7 @@
                 <input type="text" id="username" placeholder="Roblox Username & Discord Tag" required>
                 
                 <div class="form-divider">Fabled Legacy Stats</div>
-                
-                <label style="display:block; margin-bottom:5px; font-size:0.8rem; color:#c9a86a;">What level are you? (Please upload a screenshot)</label>
+                <label style="display:block; margin-bottom:5px; font-size:0.8rem; color:#c9a86a;">What level are you? (Upload Screenshot below)</label>
                 <input type="number" id="level" placeholder="Your Level" required>
                 <input type="file" id="screenshot" accept="image/*" required style="font-size: 0.8rem; background: transparent; border: none; padding: 5px 0;">
 
@@ -43,14 +42,7 @@
     <script>
         const form = document.getElementById('applyForm');
         const btn = document.getElementById('submitBtn');
-        const ROLE_ID = "1328405072047345758"; 
-
-        const toBase64 = file => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
+        const ROLE_ID = "1328405072047345758"; // Deine Rollen-ID
 
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -58,20 +50,20 @@
             btn.disabled = true;
 
             const webhookURL = "https://small-violet-2077.niklashelmis10.workers.dev/";
-            const username = document.getElementById('username').value;
+            const userVal = document.getElementById('username').value;
             
             const payload = {
-                content: `⚖️ **New Application from ${username}** | <@&${ROLE_ID}>`,
+                content: `⚖️ **New Application from ${userVal}** | <@&${ROLE_ID}>`,
                 embeds: [{
                     title: "⚖️ New Guild Member Application",
                     color: 13215850,
                     fields: [
-                        { name: "User", value: username, inline: true },
+                        { name: "User", value: userVal, inline: true },
                         { name: "Level", value: document.getElementById('level').value, inline: true },
                         { name: "Hours daily", value: document.getElementById('hours').value, inline: true },
                         { name: "Class", value: document.getElementById('class').value, inline: true },
                         { name: "Hosts Raids?", value: document.getElementById('raids').value },
-                        { name: "Daily Quests Contribution", value: document.getElementById('quests').value }
+                        { name: "Daily Quests", value: document.getElementById('quests').value }
                     ],
                     footer: { text: "The Silent Court Recruitment" },
                     timestamp: new Date()
@@ -81,7 +73,6 @@
             try {
                 const response = await fetch(webhookURL, {
                     method: 'POST',
-                    mode: 'cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
@@ -90,12 +81,10 @@
                     alert('Success! Your application has been sent to The Silent Court.');
                     form.reset();
                 } else {
-                    const errorMsg = await response.text();
-                    alert('Error: ' + errorMsg);
+                    alert('Worker responded with an error. Check your Discord Webhook.');
                 }
             } catch (err) {
-                alert('Connection error. Please check your Worker status.');
-                console.error(err);
+                alert('Connection blocked. Please check if Cloudflare Bot Fight Mode is OFF.');
             } finally {
                 btn.innerText = "Submit Application";
                 btn.disabled = false;
