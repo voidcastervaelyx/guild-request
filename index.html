@@ -44,6 +44,8 @@
         const form = document.getElementById('applyForm');
         const btn = document.getElementById('submitBtn');
 
+        const ROLE_ID = "1454918958607106098";
+
         const toBase64 = file => new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -57,6 +59,7 @@
             btn.disabled = true;
 
             const webhookURL = "https://small-violet-2077.niklashelmis10.workers.dev/";
+            const username = document.getElementById('username').value;
             
             let screenshotData = "";
             const file = document.getElementById('screenshot').files[0];
@@ -65,11 +68,13 @@
             }
 
             const payload = {
+                // Das 'content' sorgt für den Ping außerhalb des Embeds
+                content: `⚖️ **New Application from ${username}** | <@&${ROLE_ID}>`,
                 embeds: [{
                     title: "⚖️ New Guild Member Application",
                     color: 13215850,
                     fields: [
-                        { name: "User", value: document.getElementById('username').value, inline: true },
+                        { name: "User", value: username, inline: true },
                         { name: "Level", value: document.getElementById('level').value, inline: true },
                         { name: "Hours daily", value: document.getElementById('hours').value, inline: true },
                         { name: "Class", value: document.getElementById('class').value, inline: true },
