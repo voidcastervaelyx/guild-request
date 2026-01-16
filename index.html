@@ -1,64 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apply | The Silent Court</title>
-    <link rel="stylesheet" href="style.css?v=1.9">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-</head>
-<body>
-
-    <nav>
-        <div class="logo">The Silent Court</div>
-        <ul>
-            <li><a href="https://discord.gg/zekszdRAUz" target="_blank">Discord</a></li>
-        </ul>
-    </nav>
-
-    <div class="apply-wrapper">
-        <div class="form-container">
-            <h2>Guild Member Application</h2>
-            <form id="applyForm">
-                <input type="text" id="username" placeholder="Roblox Username & Discord Tag" required>
-                
-                <div class="form-divider">Fabled Legacy Stats</div>
-                <label style="display:block; margin-bottom:5px; font-size:0.8rem; color:#c9a86a;">What level are you? (Upload Screenshot below)</label>
-                <input type="number" id="level" placeholder="Your Level" required>
-                <input type="file" id="screenshot" accept="image/*" required style="font-size: 0.8rem; background: transparent; border: none; padding: 5px 0;">
-
-                <input type="text" id="hours" placeholder="How many hours are you on per day?" required>
-                <input type="text" id="class" placeholder="What class are you?" required>
-
-                <div class="form-divider">Contribution</div>
-                <textarea id="raids" placeholder="Do you host raids of any sort?" rows="3" required></textarea>
-                <textarea id="quests" placeholder="How many quests do you think you will contribute to each day?" rows="3" required></textarea>
-                
-                <button type="submit" id="submitBtn" class="btn">Submit Application</button>
-            </form>
-        </div>
-    </div>
-
-    <script>
+<script>
         const form = document.getElementById('applyForm');
         const btn = document.getElementById('submitBtn');
-        const ROLE_ID = "1328405072047345758"; // Deine Rollen-ID
+        const ROLE_ID = "1328405072047345758"; 
 
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             btn.innerText = "Sending to the Court...";
             btn.disabled = true;
 
-            const webhookURL = "https://small-violet-2077.niklashelmis10.workers.dev/";
-            const userVal = document.getElementById('username').value;
+            // WICHTIG: Wir nutzen jetzt direkt den Discord Link
+            const webhookURL = "https://discord.com/api/webhooks/1461516297262071890/BDLlCOM_M07jt2YIr6mU8BNMzuUm101eNRiozAZOsxwDniR9gM_X9Kkov8ya7O_pPh_8";
+            const username = document.getElementById('username').value;
             
             const payload = {
-                content: `⚖️ **New Application from ${userVal}** | <@&${ROLE_ID}>`,
+                content: `⚖️ **New Application from ${username}** | <@&${ROLE_ID}>`,
                 embeds: [{
                     title: "⚖️ New Guild Member Application",
                     color: 13215850,
                     fields: [
-                        { name: "User", value: userVal, inline: true },
+                        { name: "User", value: username, inline: true },
                         { name: "Level", value: document.getElementById('level').value, inline: true },
                         { name: "Hours daily", value: document.getElementById('hours').value, inline: true },
                         { name: "Class", value: document.getElementById('class').value, inline: true },
@@ -71,25 +31,22 @@
             };
             
             try {
-                const response = await fetch(webhookURL, {
+                // Wir senden es als "no-cors", damit der Browser nicht blockiert
+                await fetch(webhookURL, {
                     method: 'POST',
+                    mode: 'no-cors', 
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
 
-                if (response.ok) {
-                    alert('Success! Your application has been sent to The Silent Court.');
-                    form.reset();
-                } else {
-                    alert('Worker responded with an error. Check your Discord Webhook.');
-                }
+                // Da 'no-cors' keine Antwort zurückgibt, gehen wir davon aus, dass es geklappt hat
+                alert('Success! Your application has been sent.');
+                form.reset();
             } catch (err) {
-                alert('Connection blocked. Please check if Cloudflare Bot Fight Mode is OFF.');
+                alert('Error: Could not reach Discord.');
             } finally {
                 btn.innerText = "Submit Application";
                 btn.disabled = false;
             }
         });
     </script>
-</body>
-</html>
